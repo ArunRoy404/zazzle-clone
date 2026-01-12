@@ -17,27 +17,6 @@ const RenderImage = () => {
     const [previewImg, setPreviewImage] = useState(null)
 
 
-
-    // captures in the current resolution
-    // const captureAngle = (name, x, y, z) => {
-    //     const { scene, camera, renderer, orbitControls } = threeRef || {}
-
-    //     if (!renderer || !camera || !scene) {
-    //         toast.error("Three.js engine not fully initialized");
-    //         return;
-    //     }
-
-
-    //     camera.position.set(x, y, z)
-    //     camera.lookAt(0, 0, 0)
-    //     if (orbitControls) orbitControls.update();
-    //     renderer.render(scene, camera)
-    //     const dataURL = renderer.domElement.toDataURL("image/png");
-    //     setCapturedImages(prev => [{ name, url: dataURL }, ...prev])
-    // };
-
-
-
     const z1 = chosenModel?.camera?.z || 0          // initial camera z position
     const y1 = Math.round(z1 / 3)                   // calculated top camera position dynamically
     const angledPosition = Math.round(z1 * 0.707)   // calculated camera position for 45° and 135° angles
@@ -53,7 +32,6 @@ const RenderImage = () => {
         { name: 'Left', pos: [-z1, y1, 0] },                                   // 270°
         { name: 'Front-Left', pos: [-angledPosition, y1, angledPosition] },    // 315°
     ];
-
 
 
 
@@ -104,6 +82,7 @@ const RenderImage = () => {
         setCapturedImages([])
         angles.forEach(angle => captureAngle(angle.name, ...angle.pos));
     }
+
 
 
     useEffect(() => {

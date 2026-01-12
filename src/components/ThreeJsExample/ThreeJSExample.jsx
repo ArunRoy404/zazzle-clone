@@ -124,6 +124,7 @@ const ThreeJSExample = () => {
         threeRef.current.orbitControls = orbitControls;
         threeRef.current.isInitialized = true;
 
+        
 
         // load model 
         const loader = new GLTFLoader();
