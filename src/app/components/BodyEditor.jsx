@@ -106,23 +106,12 @@ const BodyEditor = () => {
 
     return (
         <div>
-            {
-                !selectedMesh && (
-                    <Alert variant="destructive" className='mb-1 bg-transparent'>
-                        <AlertCircleIcon />
-                        <AlertTitle>Selected a model and a mesh to start editing.</AlertTitle>
-                    </Alert>
-
-                )
-            }
             <div
                 ref={containerRef}
-                className={`relative max-w-[800px] overflow-hidden mx-auto 
-        ${!selectedMesh ? 'cursor-not-allowed opacity-50' : ''}`}
+                className={`relative max-w-[800px] overflow-hidden mx-auto `}
                 style={{ aspectRatio: aspectRatio }}
             >
-                {/* Wrap children in a div that catches or disables pointer events */}
-                <div className={!selectedMesh ? "pointer-events-none" : ""}>
+                <div>
                     {/* <CanvasFakeDecoration /> */}
                     <canvas id="canvas" />
                 </div>

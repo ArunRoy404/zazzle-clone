@@ -5,27 +5,22 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { ZoomIn, ZoomOut } from "lucide-react";
-import { getMeshDetails } from "@/services/showMeshDetails";
-import useModelStore from "@/store/useModelStore";
-import useMeshStore from "@/store/useMeshStore";
-import useBaseStore from "@/store/useBaseStore";
 import useThreeRefStore from "@/store/useThreeRefStore";
 import { Slider } from "../ui/slider";
 import useTestModeStore from "@/store/useTestModeStore";
 import UpdateMugTexture from "@/app/components/UpdateMugTexture";
-import SelectBaseMesh from "../selectBase/SelectBaseMesh";
 import TextureOptions from "@/app/components/mugOptions/TextureOptions";
+import useModelStore from "@/store/useModelStore";
+
 
 
 
 const ThreeJSExample = () => {
-    const { testMode } = useTestModeStore();
-    const [lightIntensity, setLightIntensity] = useState(5);
-    const [isMaximized, setIsMaximized] = useState(false);
     const { chosenModel } = useModelStore();
-    const { setMeshes, selectedMesh, setSelectedMesh } = useMeshStore();
-    const { selectedBase } = useBaseStore()
+    const { testMode } = useTestModeStore();
+    const [isMaximized, setIsMaximized] = useState(false);
     const { setThreeRef } = useThreeRefStore();
+    const lightIntensity = 5
 
 
 
@@ -59,6 +54,8 @@ const ThreeJSExample = () => {
             setThreeRef(null);
         };
     }, [setThreeRef]);
+
+
 
     // ---------------------------------------------------------
     // 2. RESIZE HANDLER: Keep 3D Canvas Responsive
@@ -129,7 +126,40 @@ const ThreeJSExample = () => {
         orbitControls.enableZoom = false; // initial zoom off
         threeRef.current.orbitControls = orbitControls;
         threeRef.current.isInitialized = true;
+
+
+        // load model 
+        const loader = new GLTFLoader();
+        loader.load(chosenModel.path, (gltf) => {
+            if (threeRef.current.currentModel) scene.remove(threeRef.current.currentModel);
+
+
+            if (chosenModel?.y) {
+                const model = gltf.scene;
+                model.position.y = chosenModel.y;
+                scene.add(model);
+            }
+            const object = gltf.scene;
+
+            scene.add(object);
+            threeRef.current.currentModel = object;
+
+
+            threeRef.current.currentModel.traverse((obj) => {
+                if (obj.name.includes(chosenModel.mesh)) {
+                    threeRef.current.material = obj.material;
+                }
+            });
+
+
+            if (chosenModel?.camera) {
+                threeRef.current.camera.position.set(chosenModel.camera.x, chosenModel.camera.y, chosenModel.camera.z);
+            }
+        });
     }, []);
+
+
+
 
 
 
@@ -207,122 +237,6 @@ const ThreeJSExample = () => {
 
 
 
-
-
-
-
-    // MODEL SWITCHER: Loads new model when chosenModel changes
-    useEffect(() => {
-        const { scene, isInitialized } = threeRef.current;
-        if (!isInitialized || !chosenModel) return;
-
-        const loader = new GLTFLoader();
-        loader.load(chosenModel.path, (gltf) => {
-            if (threeRef.current.currentModel) scene.remove(threeRef.current.currentModel);
-
-
-            if (chosenModel?.y) {
-                const model = gltf.scene;
-                model.position.y = chosenModel.y;
-                scene.add(model);
-            }
-
-            // const model = gltf.scene;
-            // model.position.y = -1.3;
-            // scene.add(model);
-
-            const object = gltf.scene;
-            const extractedMeshes = [];
-
-            object.traverse((obj) => {
-                if (obj instanceof THREE.Mesh) {
-                    extractedMeshes.push(getMeshDetails(obj));
-                }
-            });
-
-            setMeshes(extractedMeshes);
-
-            scene.add(object);
-            threeRef.current.currentModel = object;
-            if (chosenModel?.camera) {
-                threeRef.current.camera.position.set(chosenModel.camera.x, chosenModel.camera.y, chosenModel.camera.z);
-            }
-
-        });
-    }, [chosenModel, setMeshes]);
-
-
-
-
-    // Texture SELECTION LOGIC: Update material target when selection changes
-    useEffect(() => {
-        if (!threeRef.current.currentModel || !selectedMesh) return;
-
-        threeRef.current.currentModel.traverse((obj) => {
-            if (obj.name.includes(selectedMesh.name)) {
-                threeRef.current.material = obj.material;
-            }
-        });
-    }, [selectedMesh]);
-
-
-
-
-
-    // Base SELECTION LOGIC 
-    useEffect(() => {
-        if (!threeRef.current.currentModel || !selectedBase) return;
-
-        // Use an AbortController for easy cleanup of listeners
-        const controller = new AbortController();
-        const { signal } = controller;
-
-        threeRef.current.currentModel.traverse((obj) => {
-            if (obj.isMesh && obj.name.includes(selectedBase.name)) {
-                const mat = obj.material;
-
-                // Use the signal to automatically remove this listener later
-                colorRef.current?.addEventListener("input", (e) => {
-                    mat.color.set(e.target.value);
-                }, { signal });
-            }
-        });
-
-        // CLEANUP: This runs when selectedBase changes or component unmounts
-        return () => {
-            controller.abort(); // Removes ALL listeners attached with this signal
-        };
-    }, [selectedBase]);
-
-
-
-    // Control zoom dynamically
-    useEffect(() => {
-        const orbitControls = threeRef.current.orbitControls;
-
-        // Check if the controls actually exist yet
-        if (orbitControls) {
-            if (testMode && !isMaximized) {
-                orbitControls.enableZoom = false;
-            } else {
-                orbitControls.enableZoom = true;
-            }
-
-            // Optional: Update controls if you changed properties
-            orbitControls.update();
-        }
-    }, [testMode, isMaximized]);
-
-
-
-    useEffect(() => {
-        if (threeRef.current.directionalLight) {
-            threeRef.current.directionalLight.intensity = lightIntensity;
-        }
-    }, [lightIntensity]);
-
-
-
     // UI Styles
     const containerWidth = isMaximized ? '80dvw' : '200px';
     const containerHeight = isMaximized ? '80dvh' : '200px';
@@ -331,22 +245,6 @@ const ThreeJSExample = () => {
         <div className={`flex flex-col rounded-xl shadow-md overflow-hidden bg-gray-100 relative transition-all duration-300`}
             style={{ width: containerWidth, height: containerHeight }}
         >
-
-            <div
-                className="absolute top-3 right-8"
-            >
-                <Slider
-                    value={[lightIntensity]}
-                    max={100}
-                    step={1}
-                    onValueChange={(value) => setLightIntensity(value)}
-                    className="w-40"
-                />
-                <p className="text-xs text-muted-foreground mt-2">
-                    Light Intensity: {lightIntensity}
-                </p>
-            </div>
-
             {/* The invisible component that listens to the editor and clicks the select box */}
             <UpdateMugTexture textureRef={textureRef} />
 
@@ -360,8 +258,6 @@ const ThreeJSExample = () => {
             {/* Menu Options (Using hidden in CSS instead of conditional rendering) */}
             <div className={testMode ? 'hidden' : ''}>
                 <TextureOptions isMaximized={isMaximized} textureRef={textureRef} colorRef={colorRef} />
-
-                <SelectBaseMesh isMaximized={isMaximized} textureRef={textureRef} colorRef={colorRef} />
             </div>
 
             {/* The 3D Canvas Container */}

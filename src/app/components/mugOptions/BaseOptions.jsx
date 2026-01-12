@@ -17,4 +17,4 @@ const BaseOptions = ({ colorRef, isMaximized }) => {
         </div>
     );
 };
-export default BaseOptions; 
+export default BaseOptions;

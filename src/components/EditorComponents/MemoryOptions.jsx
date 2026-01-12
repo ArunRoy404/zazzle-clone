@@ -19,7 +19,8 @@ const MemoryOptions = () => {
     const [activeTab, setActiveTab] = useState(null)
     const [open, setOpen] = useState(false)
     const { selectedMesh } = useMeshStore();
-    const isDisabled = !!selectedMesh ? false : true;
+    // const isDisabled = !!selectedMesh ? false : true;
+    const isDisabled = false;
 
     const handleClick = (key) => {
         if (activeTab === key) {
