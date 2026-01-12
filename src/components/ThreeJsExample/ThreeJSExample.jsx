@@ -6,8 +6,6 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import { ZoomIn, ZoomOut } from "lucide-react";
 import useThreeRefStore from "@/store/useThreeRefStore";
-import { Slider } from "../ui/slider";
-import useTestModeStore from "@/store/useTestModeStore";
 import UpdateMugTexture from "@/app/components/UpdateMugTexture";
 import TextureOptions from "@/app/components/mugOptions/TextureOptions";
 import useModelStore from "@/store/useModelStore";
@@ -17,7 +15,6 @@ import useModelStore from "@/store/useModelStore";
 
 const ThreeJSExample = () => {
     const { chosenModel } = useModelStore();
-    const { testMode } = useTestModeStore();
     const [isMaximized, setIsMaximized] = useState(false);
     const { setThreeRef } = useThreeRefStore();
     const lightIntensity = 5
@@ -256,7 +253,7 @@ const ThreeJSExample = () => {
             )}
 
             {/* Menu Options (Using hidden in CSS instead of conditional rendering) */}
-            <div className={testMode ? 'hidden' : ''}>
+            <div >
                 <TextureOptions isMaximized={isMaximized} textureRef={textureRef} colorRef={colorRef} />
             </div>
 

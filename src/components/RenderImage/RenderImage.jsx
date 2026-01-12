@@ -1,5 +1,5 @@
 import useThreeRefStore from '@/store/useThreeRefStore';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import * as THREE from 'three'
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
@@ -89,7 +89,6 @@ const RenderImage = () => {
         renderer.render(scene, camera);
         setCapturedImages(prev => [{ name, url: dataUrl }, ...prev].slice(0, 8));
     };
-
 
 
 

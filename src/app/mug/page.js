@@ -4,7 +4,6 @@ import MemoryOptions from '@/components/EditorComponents/MemoryOptions';
 import BodyEditor from '../components/BodyEditor';
 import TextOptionsHorizontal from '../components/TextOptions/TextOptionsHorizontal';
 import RenderImage from '@/components/RenderImage/RenderImage';
-import TestMode from '@/components/TestMode/TestMode';
 import ThreeJSExample from '@/components/ThreeJsExample/ThreeJSExample';
 import { modelList } from '@/data/modelList';
 import useModelStore from '@/store/useModelStore';
@@ -27,10 +26,6 @@ const ThreeJsEditor = () => {
     <div className='relative bg-gray-50 flex-1 flex items-center justify-center h-full'>
       <div className='fixed top-20 right-10 z-100'>
         <ThreeJSExample />
-      </div>
-
-      <div className='fixed bottom-18 left-10 z-100'>
-        <TestMode />
       </div>
 
       <div className='fixed top-80 right-10 z-10'>
