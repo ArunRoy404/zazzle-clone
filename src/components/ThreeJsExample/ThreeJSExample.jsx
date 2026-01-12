@@ -17,7 +17,7 @@ const ThreeJSExample = () => {
     const { chosenModel } = useModelStore();
     const [isMaximized, setIsMaximized] = useState(false);
     const { setThreeRef } = useThreeRefStore();
-    const lightIntensity = 5
+    const lightIntensity = 2
 
 
 

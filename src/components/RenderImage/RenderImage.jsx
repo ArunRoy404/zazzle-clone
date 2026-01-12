@@ -1,10 +1,11 @@
 import useThreeRefStore from '@/store/useThreeRefStore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as THREE from 'three'
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
 import ViewImagesModal from './ViewImagesModal';
 import useModelStore from '@/store/useModelStore';
+import { useEditorStore } from '@/store/useEditorStore';
 
 
 
@@ -12,6 +13,9 @@ const RenderImage = () => {
     const { threeRef } = useThreeRefStore();
     const { chosenModel } = useModelStore()
     const [capturedImages, setCapturedImages] = useState([]);
+    const { editorRef } = useEditorStore()
+    const [previewImg, setPreviewImage] = useState(null)
+
 
 
     // captures in the current resolution
@@ -55,7 +59,7 @@ const RenderImage = () => {
 
 
     // captures in high resolutions 
-    const captureAngle = (name, x, y, z) => {
+    const captureAngle = (name, x, y, z, callBackFn) => {
         const { scene, camera, renderer, orbitControls } = threeRef || {};
 
         if (!renderer || !camera || !scene) {
@@ -87,7 +91,11 @@ const RenderImage = () => {
 
 
         renderer.render(scene, camera);
-        setCapturedImages(prev => [{ name, url: dataUrl }, ...prev].slice(0, 8));
+        if (callBackFn) {
+            callBackFn({ name, url: dataUrl })
+        } else {
+            setCapturedImages(prev => [{ name, url: dataUrl }, ...prev].slice(0, 8));
+        }
     };
 
 
@@ -98,11 +106,44 @@ const RenderImage = () => {
     }
 
 
+    useEffect(() => {
+        if (!editorRef || !editorRef?.backgroundColor) return;
+
+        const updatePreviewImg = () => {
+            setTimeout(() => {
+                captureAngle(angles[1].name, ...angles[1].pos, setPreviewImage)
+            }, 1000);
+        }
+
+        editorRef.on('object:added', updatePreviewImg);
+        editorRef.on('object:modified', updatePreviewImg);
+        editorRef.on('object:removed', updatePreviewImg);
+        editorRef.on('canvas:modified', updatePreviewImg);
+
+        return () => {
+            editorRef.off('object:added', updatePreviewImg);
+            editorRef.off('object:modified', updatePreviewImg);
+            editorRef.off('object:removed', updatePreviewImg);
+            editorRef.off('canvas:modified', updatePreviewImg);
+        }
+    }, [editorRef])
+
+
 
     return (
         <div className="flex flex-col gap-4 p-4 rounded-xl shadow-md bg-white border border-gray-200 w-fit">
             <p className='text-[10px] font-black text-slate-500 uppercase tracking-widest'>Render Studio ({capturedImages.length}/8)</p>
 
+            <div className="relative group">
+                <img
+                    src={previewImg?.url}
+                    alt={previewImg?.name}
+                    className="w-30 h-40 object-cover rounded border bg-gray-50"
+                />
+                <span className="absolute bottom-0 left-0 bg-black/50 text-[8px] text-white px-1">
+                    {previewImg?.name}
+                </span>
+            </div>
 
             <div className="grid grid-cols-2 gap-2 mt-2">
                 {capturedImages.map((img, idx) => (
