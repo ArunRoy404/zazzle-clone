@@ -4,17 +4,17 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import TextureOptions from "../../app/threejs-editor/components/mugOptions/TextureOptions";
 import { ZoomIn, ZoomOut } from "lucide-react";
-import UpdateMugTexture from "../../app/threejs-editor/components/UpdateMugTexture";
 import { getMeshDetails } from "@/services/showMeshDetails";
 import useModelStore from "@/store/useModelStore";
 import useMeshStore from "@/store/useMeshStore";
-import SelectBaseMesh from "../../app/threejs-editor/components/mugOptions/BaseOptions";
 import useBaseStore from "@/store/useBaseStore";
 import useThreeRefStore from "@/store/useThreeRefStore";
 import { Slider } from "../ui/slider";
 import useTestModeStore from "@/store/useTestModeStore";
+import UpdateMugTexture from "@/app/components/UpdateMugTexture";
+import SelectBaseMesh from "../selectBase/SelectBaseMesh";
+import TextureOptions from "@/app/components/mugOptions/TextureOptions";
 
 
 
