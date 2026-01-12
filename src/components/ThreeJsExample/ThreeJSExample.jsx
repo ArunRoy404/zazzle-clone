@@ -2,7 +2,6 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import useThreeRefStore from "@/store/useThreeRefStore";
 import useModelStore from "@/store/useModelStore";
@@ -15,7 +14,6 @@ const ThreeJSExample = () => {
     const { chosenModel } = useModelStore();
     const [modelLoaded, setModelLoaded] = useState(false);
     const { setThreeRef } = useThreeRefStore();
-    const lightIntensity = 2;
     const [dataURL, setDataURL] = useState(null);
 
 
@@ -25,7 +23,6 @@ const ThreeJSExample = () => {
         camera: null,
         renderer: null,
         currentModel: null,
-        orbitControls: null,
         material: null,
         frameId: null,
         isInitialized: false,
@@ -42,17 +39,6 @@ const ThreeJSExample = () => {
 
 
 
-    const onWindowResize = useCallback(() => {
-        const container = containerRef.current;
-        const { camera, renderer } = threeRef.current;
-        if (!container || !camera || !renderer) return;
-
-        camera.aspect = container.offsetWidth / container.offsetHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(container.offsetWidth, container.offsetHeight);
-    }, []);
-
-
 
     const init = useCallback(() => {
         if (threeRef.current.isInitialized) return;
@@ -64,15 +50,6 @@ const ThreeJSExample = () => {
         const camera = new THREE.PerspectiveCamera(15, container.offsetWidth / container.offsetHeight, 0.1, 1000);
         camera.position.set(0, 0, 80);
         threeRef.current.camera = camera;
-
-        // Lighting
-        // const hemispheric = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
-        // scene.add(hemispheric);
-        // const directional = new THREE.DirectionalLight(0xffffff, lightIntensity);
-        // directional.position.set(5, 5, 5);
-        // scene.add(directional);
-        // threeRef.current.directionalLight = directional;
-
 
 
         // 1. Ambient Light: Provides base illumination from every direction (No shadows)
@@ -94,7 +71,7 @@ const ThreeJSExample = () => {
         scene.add(backLight);
 
 
-        
+
         // Renderer
         const renderer = new THREE.WebGLRenderer({
             antialias: true,
@@ -108,13 +85,9 @@ const ThreeJSExample = () => {
         renderer.outputColorSpace = THREE.SRGBColorSpace;
         container.appendChild(renderer.domElement);
         threeRef.current.renderer = renderer;
-
-        // Controls
-        const orbitControls = new OrbitControls(camera, renderer.domElement);
-        orbitControls.enableDamping = true;
-        orbitControls.enableZoom = true;
-        threeRef.current.orbitControls = orbitControls;
         threeRef.current.isInitialized = true;
+
+
 
         // Load Model
         const loader = new GLTFLoader();
@@ -142,16 +115,7 @@ const ThreeJSExample = () => {
 
 
 
-    const animate = useCallback(() => {
-        const { renderer, scene, camera, orbitControls } = threeRef.current;
-        if (renderer && scene && camera) {
-            orbitControls?.update();
-            renderer.render(scene, camera);
-        }
-        threeRef.current.frameId = requestAnimationFrame(animate);
-    }, []);
-
-
+    
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -162,34 +126,30 @@ const ThreeJSExample = () => {
                 if (width > 0 && height > 0) {
                     if (!threeRef.current.isInitialized) {
                         init();
-                        animate();
-                    } else {
-                        onWindowResize();
                     }
                 }
             }
         });
-
-
         if (containerRef.current) resizeObserver.observe(containerRef.current);
-        window.addEventListener("resize", onWindowResize);
-
-
         return () => {
-            resizeObserver.disconnect();
             cancelAnimationFrame(threeRef.current.frameId);
-            window.removeEventListener("resize", onWindowResize);
 
             if (threeRef.current.renderer) {
                 threeRef.current.renderer.dispose();
+
                 if (containerRef.current?.contains(threeRef.current.renderer.domElement)) {
                     containerRef.current.removeChild(threeRef.current.renderer.domElement);
                 }
+
                 threeRef.current.renderer = null;
                 threeRef.current.isInitialized = false;
             }
         };
-    }, [init, animate, onWindowResize]);
+    }, [init]);
+
+
+
+
 
 
 
@@ -211,6 +171,7 @@ const ThreeJSExample = () => {
             events.forEach(event => editorRef.off(event, updateDataURL));
         };
     }, [editorRef]);
+
 
 
     useEffect(() => {
