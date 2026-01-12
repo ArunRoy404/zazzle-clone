@@ -66,13 +66,35 @@ const ThreeJSExample = () => {
         threeRef.current.camera = camera;
 
         // Lighting
-        const hemispheric = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
-        scene.add(hemispheric);
-        const directional = new THREE.DirectionalLight(0xffffff, lightIntensity);
-        directional.position.set(5, 5, 5);
-        scene.add(directional);
-        threeRef.current.directionalLight = directional;
+        // const hemispheric = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
+        // scene.add(hemispheric);
+        // const directional = new THREE.DirectionalLight(0xffffff, lightIntensity);
+        // directional.position.set(5, 5, 5);
+        // scene.add(directional);
+        // threeRef.current.directionalLight = directional;
 
+
+
+        // 1. Ambient Light: Provides base illumination from every direction (No shadows)
+        const ambient = new THREE.AmbientLight(0xffffff, 1.2);
+        scene.add(ambient);
+
+        // 2. Hemisphere Light: Provides a subtle gradient so the model doesn't look "flat" 
+        // (Sky color, Ground color, Intensity)
+        const hemispheric = new THREE.HemisphereLight(0xffffff, 0xffffff, 1.5);
+        scene.add(hemispheric);
+
+        // 3. Optional: Fill Lights (If you want the front/back to be extra bright)
+        const frontLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        frontLight.position.set(0, 0, 10); // Directly in front of the mug
+        scene.add(frontLight);
+
+        const backLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        backLight.position.set(0, 0, -10); // Directly behind the mug
+        scene.add(backLight);
+
+
+        
         // Renderer
         const renderer = new THREE.WebGLRenderer({
             antialias: true,
@@ -116,7 +138,7 @@ const ThreeJSExample = () => {
             }
             setModelLoaded(true);
         });
-    }, [chosenModel, lightIntensity]);
+    }, [chosenModel]);
 
 
 
