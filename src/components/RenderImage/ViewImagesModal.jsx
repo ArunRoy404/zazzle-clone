@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Download, Eye } from "lucide-react";
 
-const ViewImagesModal = ({ images }) => {
+const ViewImagesModal = ({ images, handleRenderAllImages }) => {
     const [api, setApi] = useState(null);
     const [current, setCurrent] = useState(0);
 
@@ -30,19 +30,20 @@ const ViewImagesModal = ({ images }) => {
         });
     }, [api]);
 
-    if (!images || images.length === 0) return null;
 
     const scrollTo = (index) => {
         api?.scrollTo(index);
     };
 
+
+
+    
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" className="flex gap-2 items-center w-full">
+                <Button variant="outline" onClick={handleRenderAllImages} className="flex gap-2 items-center w-full">
                     <Eye size={16} />
-                    <span>View Renders</span>
-                    <span className="hidden sm:inline">({images.length})</span>
+                    <span>Preview</span>
                 </Button>
             </DialogTrigger>
 
