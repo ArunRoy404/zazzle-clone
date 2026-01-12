@@ -4,17 +4,19 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { ZoomIn, ZoomOut } from "lucide-react";
 import useThreeRefStore from "@/store/useThreeRefStore";
-import UpdateMugTexture from "@/app/components/UpdateMugTexture";
 import useModelStore from "@/store/useModelStore";
+import { useEditorStore } from "@/store/useEditorStore";
+import { createDataURL } from "@/services/createDataURL";
+
 
 const ThreeJSExample = () => {
+    const { editorRef } = useEditorStore();
     const { chosenModel } = useModelStore();
-    const [isMaximized, setIsMaximized] = useState(false);
     const [modelLoaded, setModelLoaded] = useState(false);
     const { setThreeRef } = useThreeRefStore();
     const lightIntensity = 2;
+    const [dataURL, setDataURL] = useState(null);
 
 
 
@@ -169,25 +171,57 @@ const ThreeJSExample = () => {
 
 
 
+    // 1. Sync Fabric.js Canvas to a DataURL state
+    useEffect(() => {
+        if (!editorRef || !editorRef?.backgroundColor) return;
 
-    const containerWidth = isMaximized ? '80dvw' : '200px';
-    const containerHeight = isMaximized ? '80dvh' : '200px';
+        const updateDataURL = () => {
+            const dataUrl = createDataURL(editorRef);
+            setDataURL(dataUrl);
+        };
+
+        updateDataURL()
+
+        const events = ['object:added', 'object:modified', 'object:removed', 'canvas:modified'];
+        events.forEach(event => editorRef.on(event, updateDataURL));
+
+        return () => {
+            events.forEach(event => editorRef.off(event, updateDataURL));
+        };
+    }, [editorRef]);
+
+
+    useEffect(() => {
+        // Now this effect runs when dataURL changes OR when the model finishes loading
+        if (!dataURL || !threeRef.current.material) return;
+
+        const textureLoader = new THREE.TextureLoader();
+
+        textureLoader.load(dataURL, (texture) => {
+            texture.colorSpace = THREE.SRGBColorSpace;
+            texture.flipY = true;
+
+            const material = threeRef.current.material;
+
+            if (material.map) material.map.dispose();
+
+            material.map = texture;
+            material.needsUpdate = true;
+        });
+
+        // Adding modelLoaded here is the key fix
+    }, [dataURL, threeRef, modelLoaded]);
+
+
+
+    const containerWidth = '200px';
+    const containerHeight = '200px';
 
     return (
         <div
             className="flex flex-col rounded-xl shadow-md overflow-hidden bg-gray-100 relative transition-all duration-300"
             style={{ width: containerWidth, height: containerHeight }}
         >
-            <UpdateMugTexture threeRef={threeRef} modelLoaded={modelLoaded} />
-
-            <div className="absolute top-2 right-2 z-30 text-slate-400 cursor-pointer">
-                {isMaximized ? (
-                    <ZoomOut onClick={() => setIsMaximized(false)} size={15} />
-                ) : (
-                    <ZoomIn onClick={() => setIsMaximized(true)} size={15} />
-                )}
-            </div>
-
             <div ref={containerRef} className="w-full h-full" style={{ touchAction: 'none' }} />
         </div>
     );
