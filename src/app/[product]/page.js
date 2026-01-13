@@ -11,6 +11,7 @@ import RenderModel from '@/components/RenderModel/RenderModel';
 import { useParams } from 'next/navigation';
 import ViewImagesModal from '@/components/RenderImage/ViewImagesModal';
 import EditorDrawer from '@/components/EditorComponents/EditorDrawer/EditorDrawer';
+import NoModelFound from '@/components/NoModelFound/NoModelFound';
 
 
 
@@ -26,7 +27,7 @@ const ProductEditor = () => {
   }, [mugModelData, setChosenModel])
 
 
-  if (!chosenModel) return null;
+  if (!chosenModel) return <NoModelFound /> 
 
   return (
     <div className='relative bg-gray-100 flex-1 flex items-center justify-center h-full'>
