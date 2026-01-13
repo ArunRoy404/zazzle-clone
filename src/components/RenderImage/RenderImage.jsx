@@ -16,7 +16,7 @@ const RenderImage = () => {
 
 
     const z1 = chosenModel?.camera?.z || 0          // initial camera z position
-    const y1 = Math.round(z1 / 3)                   // calculated top camera position dynamically
+    const y1 = Math.round(z1 / (chosenModel?.topDivider || 3))                   // calculated top camera position dynamically
     const angledPosition = Math.round(z1 * 0.707)   // calculated camera position for 45° and 135° angles
     const previewAngle = [angledPosition, y1, angledPosition]
 
