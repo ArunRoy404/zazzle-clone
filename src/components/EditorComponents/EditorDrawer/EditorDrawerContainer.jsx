@@ -3,6 +3,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import editorOptionsData from "@/data/editorOptionsData"
 import ImageContainerEditor from "../Editor/ImageContainerEditor"
 import EditorTextInsert from "../Editor/EditorTextInsert"
+import BackgroundOptionsContainer from "../Editor/BackgroundOptionsContainer"
+import StickersContainer from "../StickersOptions/StickersContainer"
+import LayersList from "../LayersList/LayersList"
 
 function EditorDrawerContainer() {
     return (
@@ -31,15 +34,15 @@ function EditorDrawerContainer() {
                 </TabsContent>
 
                 <TabsContent value="bg">
-                    <Card><CardContent className="pt-6 text-center text-sm">BG Settings</CardContent></Card>
+                    <BackgroundOptionsContainer />
                 </TabsContent>
 
                 <TabsContent value="sticker">
-                    <Card><CardContent className="pt-6 text-center text-sm">Stickers Library</CardContent></Card>
+                    <StickersContainer />
                 </TabsContent>
 
                 <TabsContent value="layers">
-                    <Card><CardContent className="pt-6 text-center text-sm">Layers Panel</CardContent></Card>
+                    <LayersList />
                 </TabsContent>
             </Tabs>
         </div>

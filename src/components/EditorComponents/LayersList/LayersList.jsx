@@ -51,7 +51,7 @@ const LayersList = () => {
             } else {
                 editorRef.setBackgroundColor(bgColor)
             }
-            
+
             newOrder.forEach(obj => editorRef.add(obj))
             editorRef.requestRenderAll()
             setObjectsArray(newOrder);
@@ -85,7 +85,7 @@ const LayersList = () => {
 
 
     return (
-        <div className='min-h-[300px] max-h-[500px] w-full overflow-y-auto overflow-x-hidden border border-gray-200 rounded-md relative'>
+        <div className='min-h-75 max-h-70 md:max-h-125 w-full overflow-y-auto overflow-x-hidden border border-gray-200 rounded-md relative'>
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}

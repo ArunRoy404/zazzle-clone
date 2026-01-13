@@ -54,11 +54,11 @@ const stickers = [
 
 const StickersContainer = () => {
     return (
-            <div className="grid grid-cols-3 gap-3">
-                {
-                    stickers.map(({ icon, url }, i) => <Sticker key={i} icon={icon} url={url} />)
-                }
-            </div>
+        <div className="grid grid-cols-3 gap-3 h-70 md:h-full overflow-y-auto">
+            {
+                stickers.map(({ icon, url }, i) => <Sticker key={i} icon={icon} url={url} />)
+            }
+        </div>
     );
 };
 
