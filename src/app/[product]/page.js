@@ -20,7 +20,7 @@ const ProductEditor = () => {
   const { product } = params;
 
 
-  const mugModelData = modelList.find((model) => model.name === product);
+  const mugModelData = modelList.find((model) => model.name.toLocaleLowerCase() === product.toLocaleLowerCase());
   useEffect(() => {
     if (mugModelData) setChosenModel(mugModelData)
   }, [mugModelData, setChosenModel])
