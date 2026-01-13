@@ -8,40 +8,55 @@ import { modelList } from '@/data/modelList';
 import useModelStore from '@/store/useModelStore';
 import { useEffect } from 'react';
 import RenderModel from '@/components/RenderModel/RenderModel';
+import { useParams } from 'next/navigation';
+import ViewImagesModal from '@/components/RenderImage/ViewImagesModal';
+import EditorDrawer from '@/components/EditorComponents/EditorDrawer/EditorDrawer';
 
 
 
-const ThreeJsEditor = () => {
-  const mugModelData = modelList.find((model) => model.name === 'Mug');
+const ProductEditor = () => {
   const { chosenModel, setChosenModel } = useModelStore()
+  const params = useParams();
+  const { product } = params;
 
+
+  const mugModelData = modelList.find((model) => model.name === product);
   useEffect(() => {
-    setChosenModel(mugModelData)
+    if (mugModelData) setChosenModel(mugModelData)
   }, [mugModelData, setChosenModel])
 
 
   if (!chosenModel) return null;
 
   return (
-    <div className='relative bg-gray-50 flex-1 flex items-center justify-center h-full'>
+    <div className='relative bg-gray-100 flex-1 flex items-center justify-center h-full'>
       <div className='fixed top-80 right-10 z-100'>
         <RenderModel />
       </div>
 
-      <div className='fixed top-20 right-10 z-10'>
+      <div className='hidden md:block fixed top-20 right-10 z-10'>
         <RenderImage modelData={mugModelData} />
       </div>
 
-      <div className='absolute top-20'>
+      <div className='hidden md:block    <ViewImagesModal />'>
         <TextOptionsHorizontal />
       </div>
 
-      <div className='absolute left-10'>
+      <div className='hidden md:block absolute left-10'>
         <MemoryOptions />
       </div>
+
+
+      <div className='absolute bottom-4 right-4 md:hidden flex items-center gap-2'>
+        <EditorDrawer />
+        <ViewImagesModal />
+      </div>
+
+
+
       <BodyEditor />
     </div>
   );
 };
 
-export default ThreeJsEditor;
+export default ProductEditor;

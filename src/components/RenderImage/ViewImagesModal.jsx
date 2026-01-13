@@ -75,7 +75,10 @@ const ViewImagesModal = () => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline" onClick={handleRenderAllImages} className="flex gap-2 items-center w-full">
+                <Button variant="outline"
+                    onClick={handleRenderAllImages}
+                    className="max-w-max flex gap-2 items-center w-full"
+                >
                     <Eye size={16} />
                     <span>Preview</span>
                 </Button>
