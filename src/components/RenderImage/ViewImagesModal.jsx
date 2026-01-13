@@ -19,7 +19,7 @@ import useModelStore from '@/store/useModelStore';
 import { captureAngle } from '@/services/RenderImage';
 import useThreeRefStore from '@/store/useThreeRefStore';
 import { cn } from '@/lib/utils';
-
+import { Loader2 } from "lucide-react"; // Import a spinner icon
 
 
 const ViewImagesModal = ({ triggerClassname }) => {
@@ -28,7 +28,7 @@ const ViewImagesModal = ({ triggerClassname }) => {
     const [api, setApi] = useState(null);
     const [current, setCurrent] = useState(0);
     const [capturedImages, setCapturedImages] = useState([]);
-
+    const [isRendering, setIsRendering] = useState(false);
 
     const z1 = chosenModel?.camera?.z || 0          // initial camera z position
     const y1 = Math.round(z1 / 3)                   // calculated top camera position dynamically
@@ -46,14 +46,24 @@ const ViewImagesModal = ({ triggerClassname }) => {
         { name: 'Front-Left', pos: [-angledPosition, y1, angledPosition] },    // 315°
     ];
 
-
     const handleRenderAllImages = () => {
-        setCapturedImages([])
-        angles.forEach(angle => {
-            const img = captureAngle(threeRef, angle.name, ...angle.pos)
-            setCapturedImages(prev => [...prev, img])
-        });
-    }
+        setIsRendering(true);
+        setCapturedImages([]);
+
+        // 2. Wrap in setTimeout(0) to allow React to render the loading state first
+        setTimeout(() => {
+            try {
+                const results = angles.map(angle => {
+                    return captureAngle(threeRef, angle.name, ...angle.pos);
+                });
+                setCapturedImages(results);
+            } catch (error) {
+                console.error("Rendering failed", error);
+            } finally {
+                setIsRendering(false);
+            }
+        }, 100);
+    };
 
 
 
@@ -94,80 +104,89 @@ const ViewImagesModal = ({ triggerClassname }) => {
                     <DialogTitle className="text-center font-bold text-lg">Product Renders</DialogTitle>
                 </DialogHeader>
 
-                <div className="flex flex-col items-center justify-center space-y-6">
 
-                    {/* Main Carousel View */}
-                    <div className="w-full max-w-[320px] sm:max-w-md relative mt-4">
-                        <Carousel setApi={setApi} className="w-full">
-                            <CarouselContent>
-                                {capturedImages?.map((img, index) => (
-                                    <CarouselItem key={index}>
-                                        <div className="relative aspect-square rounded-xl bg-slate-50 border border-slate-200 overflow-hidden shadow-sm">
-                                            <img
-                                                src={img?.url}
-                                                alt={img?.name}
-                                                className="object-contain w-full h-full"
-                                            />
+                {/* 3. Conditional UI: Show a loader inside the modal if images aren't ready */}
+                {isRendering || capturedImages.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-[400px] space-y-4">
+                        <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+                        <p className="text-sm text-slate-500 font-medium">Loading</p>
+                    </div>
+                ) : (
+                    <div className="flex flex-col items-center justify-center space-y-6">
 
-                                            {/* Bottom Info Bar - Responsive Text */}
-                                            <div className="absolute bottom-0 w-full bg-black/70 backdrop-blur-sm p-2 sm:p-3 flex justify-between items-center text-white">
-                                                <span className="text-[10px] sm:text-sm font-medium uppercase tracking-wider">
-                                                    {img?.name}
-                                                </span>
-                                                <a
-                                                    href={img?.url}
-                                                    download={`render-${img?.name}.png`}
-                                                    className="bg-white/20 hover:bg-white/40 p-1.5 sm:p-2 rounded-full transition-colors"
-                                                >
-                                                    <Download size={14} className="sm:w-4.5 sm:h-4.5" />
-                                                </a>
+                        {/* Main Carousel View */}
+                        <div className="w-full max-w-[320px] sm:max-w-md relative mt-4">
+                            <Carousel setApi={setApi} className="w-full">
+                                <CarouselContent>
+                                    {capturedImages?.map((img, index) => (
+                                        <CarouselItem key={index}>
+                                            <div className="relative aspect-square rounded-xl bg-slate-50 border border-slate-200 overflow-hidden shadow-sm">
+                                                <img
+                                                    src={img?.url}
+                                                    alt={img?.name}
+                                                    className="object-contain w-full h-full"
+                                                />
+
+                                                {/* Bottom Info Bar - Responsive Text */}
+                                                <div className="absolute bottom-0 w-full bg-black/70 backdrop-blur-sm p-2 sm:p-3 flex justify-between items-center text-white">
+                                                    <span className="text-[10px] sm:text-sm font-medium uppercase tracking-wider">
+                                                        {img?.name}
+                                                    </span>
+                                                    <a
+                                                        href={img?.url}
+                                                        download={`render-${img?.name}.png`}
+                                                        className="bg-white/20 hover:bg-white/40 p-1.5 sm:p-2 rounded-full transition-colors"
+                                                    >
+                                                        <Download size={14} className="sm:w-4.5 sm:h-4.5" />
+                                                    </a>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </CarouselItem>
-                                ))}
-                            </CarouselContent>
+                                        </CarouselItem>
+                                    ))}
+                                </CarouselContent>
 
-                            {/* Hidden on mobile to save space, or use smaller variants */}
-                            <CarouselPrevious className="hidden sm:flex -left-12" />
-                            <CarouselNext className="hidden sm:flex -right-12" />
-                        </Carousel>
+                                {/* Hidden on mobile to save space, or use smaller variants */}
+                                <CarouselPrevious className="hidden sm:flex -left-12" />
+                                <CarouselNext className="hidden sm:flex -right-12" />
+                            </Carousel>
 
-                        {/* Mobile-only swipe indicator */}
-                        <div className="flex sm:hidden justify-center mt-2 text-[10px] text-slate-400">
-                            Swipe to rotate
+                            {/* Mobile-only swipe indicator */}
+                            <div className="flex sm:hidden justify-center mt-2 text-[10px] text-slate-400">
+                                Swipe to rotate
+                            </div>
                         </div>
-                    </div>
 
-                    <div className="w-full space-y-3">
-                        <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">
-                            Select Angle
-                        </p>
+                        <div className="w-full space-y-3">
+                            <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">
+                                Select Angle
+                            </p>
 
-                        {/* Thumbnail Grid: 4 columns on mobile, 8 on tablet+ */}
-                        <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 w-full max-w-lg mx-auto">
-                            {capturedImages.map((img, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => scrollTo(index)}
-                                    className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all duration-200 
+                            {/* Thumbnail Grid: 4 columns on mobile, 8 on tablet+ */}
+                            <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 w-full max-w-lg mx-auto">
+                                {capturedImages.map((img, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => scrollTo(index)}
+                                        className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all duration-200 
                                         ${current === index
-                                            ? 'border-blue-600 ring-2 ring-blue-100 scale-105 z-10'
-                                            : 'border-slate-200 opacity-60'}`}
-                                >
-                                    <img
-                                        src={img?.url}
-                                        alt={img?.name}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </button>
-                            ))}
+                                                ? 'border-blue-600 ring-2 ring-blue-100 scale-105 z-10'
+                                                : 'border-slate-200 opacity-60'}`}
+                                    >
+                                        <img
+                                            src={img?.url}
+                                            alt={img?.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </button>
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    <p className="text-muted-foreground text-[10px] sm:text-[11px]">
-                        Angle {current + 1} of {capturedImages.length}
-                    </p>
-                </div>
+                        <p className="text-muted-foreground text-[10px] sm:text-[11px]">
+                            Angle {current + 1} of {capturedImages.length}
+                        </p>
+                    </div>
+                )}
             </DialogContent>
         </Dialog>
     );
