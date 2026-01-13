@@ -1,5 +1,4 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent } from "@/components/ui/card"
 import editorOptionsData from "@/data/editorOptionsData"
 import ImageContainerEditor from "../Editor/ImageContainerEditor"
 import EditorTextInsert from "../Editor/EditorTextInsert"
