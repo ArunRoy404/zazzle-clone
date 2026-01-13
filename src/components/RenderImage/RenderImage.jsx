@@ -10,7 +10,6 @@ import { captureAngle } from '@/services/RenderImage';
 const RenderImage = () => {
     const { threeRef } = useThreeRefStore();
     const { chosenModel } = useModelStore()
-    const [capturedImages, setCapturedImages] = useState([]);
     const { editorRef } = useEditorStore()
     const [previewImg, setPreviewImage] = useState(null)
     const [isPreviewRendering, setIsPreviewRendering] = useState(false);
@@ -20,27 +19,6 @@ const RenderImage = () => {
     const y1 = Math.round(z1 / 3)                   // calculated top camera position dynamically
     const angledPosition = Math.round(z1 * 0.707)   // calculated camera position for 45° and 135° angles
     const previewAngle = [angledPosition, y1, angledPosition]
-
-    const angles = [
-        { name: 'Front', pos: [0, y1, z1] },                                   // 0°
-        { name: 'Front-Right', pos: [angledPosition, y1, angledPosition] },    // 45°
-        { name: 'Right', pos: [z1, y1, 0] },                                   // 90°
-        { name: 'Back-Right', pos: [angledPosition, y1, -angledPosition] },    // 135°
-        { name: 'Back', pos: [0, y1, -z1] },                                   // 180°
-        { name: 'Back-Left', pos: [-angledPosition, y1, -angledPosition] },    // 225°
-        { name: 'Left', pos: [-z1, y1, 0] },                                   // 270°
-        { name: 'Front-Left', pos: [-angledPosition, y1, angledPosition] },    // 315°
-    ];
-
-
-    const handleRenderAllImages = () => {
-        setCapturedImages([])
-        angles.forEach(angle => {
-            const img = captureAngle(threeRef, angle.name, ...angle.pos)
-            setCapturedImages(prev => [...prev, img])
-        });
-    }
-
 
 
     useEffect(() => {
@@ -85,7 +63,7 @@ const RenderImage = () => {
             </div>
 
             <div>
-                <ViewImagesModal images={capturedImages} handleRenderAllImages={handleRenderAllImages} />
+                <ViewImagesModal />
             </div>
         </div>
     );

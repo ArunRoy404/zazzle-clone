@@ -15,10 +15,43 @@ import {
 } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
 import { Download, Eye } from "lucide-react";
+import useModelStore from '@/store/useModelStore';
 
-const ViewImagesModal = ({ images, handleRenderAllImages }) => {
+const ViewImagesModal = () => {
+    const { chosenModel } = useModelStore()
     const [api, setApi] = useState(null);
     const [current, setCurrent] = useState(0);
+    const [capturedImages, setCapturedImages] = useState([]);
+
+
+
+
+    const z1 = chosenModel?.camera?.z || 0          // initial camera z position
+    const y1 = Math.round(z1 / 3)                   // calculated top camera position dynamically
+    const angledPosition = Math.round(z1 * 0.707)   // calculated camera position for 45° and 135° angles
+
+
+    const angles = [
+        { name: 'Front', pos: [0, y1, z1] },                                   // 0°
+        { name: 'Front-Right', pos: [angledPosition, y1, angledPosition] },    // 45°
+        { name: 'Right', pos: [z1, y1, 0] },                                   // 90°
+        { name: 'Back-Right', pos: [angledPosition, y1, -angledPosition] },    // 135°
+        { name: 'Back', pos: [0, y1, -z1] },                                   // 180°
+        { name: 'Back-Left', pos: [-angledPosition, y1, -angledPosition] },    // 225°
+        { name: 'Left', pos: [-z1, y1, 0] },                                   // 270°
+        { name: 'Front-Left', pos: [-angledPosition, y1, angledPosition] },    // 315°
+    ];
+
+
+    const handleRenderAllImages = () => {
+        setCapturedImages([])
+        angles.forEach(angle => {
+            const img = captureAngle(threeRef, angle.name, ...angle.pos)
+            setCapturedImages(prev => [...prev, img])
+        });
+    }
+
+
 
     useEffect(() => {
         if (!api) return;
@@ -37,7 +70,7 @@ const ViewImagesModal = ({ images, handleRenderAllImages }) => {
 
 
 
-    
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -59,7 +92,7 @@ const ViewImagesModal = ({ images, handleRenderAllImages }) => {
                     <div className="w-full max-w-[320px] sm:max-w-md relative mt-4">
                         <Carousel setApi={setApi} className="w-full">
                             <CarouselContent>
-                                {images.map((img, index) => (
+                                {capturedImages.map((img, index) => (
                                     <CarouselItem key={index}>
                                         <div className="relative aspect-square rounded-xl bg-slate-50 border border-slate-200 overflow-hidden shadow-sm">
                                             <img
@@ -104,7 +137,7 @@ const ViewImagesModal = ({ images, handleRenderAllImages }) => {
 
                         {/* Thumbnail Grid: 4 columns on mobile, 8 on tablet+ */}
                         <div className="grid grid-cols-4 sm:grid-cols-8 gap-2 w-full max-w-lg mx-auto">
-                            {images.map((img, index) => (
+                            {capturedImages.map((img, index) => (
                                 <button
                                     key={index}
                                     onClick={() => scrollTo(index)}
@@ -124,7 +157,7 @@ const ViewImagesModal = ({ images, handleRenderAllImages }) => {
                     </div>
 
                     <p className="text-muted-foreground text-[10px] sm:text-[11px]">
-                        Angle {current + 1} of {images.length}
+                        Angle {current + 1} of {capturedImages.length}
                     </p>
                 </div>
             </DialogContent>

@@ -1,27 +1,17 @@
 'use client'
 
 
-import { AlertCircleIcon } from "lucide-react"
-import {
-    Alert,
-    AlertDescription,
-    AlertTitle,
-} from "@/components/ui/alert"
 import { applyCommonStyles } from "@/services/CommonControlStyle";
 import { handleDeleteObject, handleRemoveEmptyText, handleRemoveText, touchToText } from "@/services/Editor";
 import { useEditorStore } from "@/store/useEditorStore";
-import useMeshStore from "@/store/useMeshStore";
 import * as fabric from "fabric";
 import { useEffect, useRef } from "react";
-import CanvasFakeDecoration from "./CanvasFakeDecoration";
 
 const BodyEditor = () => {
     const { editorRef, setEditorRef, pages, currentPage } = useEditorStore()
-    const { selectedMesh } = useMeshStore()
 
     let width = 2700;
     let height = 1100;
-    // let height = 1624;
     const containerRef = useRef(null);
     const aspectRatio = width / height;
 

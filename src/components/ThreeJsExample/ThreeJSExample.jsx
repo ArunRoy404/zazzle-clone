@@ -115,7 +115,7 @@ const ThreeJSExample = () => {
 
 
 
-    
+
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -146,9 +146,6 @@ const ThreeJSExample = () => {
             }
         };
     }, [init]);
-
-
-
 
 
 
@@ -197,15 +194,12 @@ const ThreeJSExample = () => {
 
 
 
-    const containerWidth = '200px';
-    const containerHeight = '200px';
 
     return (
         <div
-            className="flex flex-col rounded-xl shadow-md overflow-hidden bg-gray-100 relative transition-all duration-300"
-            style={{ width: containerWidth, height: containerHeight }}
+            className="flex flex-col rounded-xl shadow-md overflow-hidden bg-gray-100 relative transition-all duration-300 w-50 h-50"
         >
-            <div ref={containerRef} className="w-full h-full" style={{ touchAction: 'none' }} />
+            <div ref={containerRef} className="w-full h-full" />
         </div>
     );
 };
