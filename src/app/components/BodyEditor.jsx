@@ -2,16 +2,18 @@
 
 
 import { applyCommonStyles } from "@/services/CommonControlStyle";
-import { handleDeleteObject, handleRemoveEmptyText, handleRemoveText, touchToText } from "@/services/Editor";
+import { handleDeleteObject, handleRemoveEmptyText, handleRemoveText } from "@/services/Editor";
 import { useEditorStore } from "@/store/useEditorStore";
+import useModelStore from "@/store/useModelStore";
 import * as fabric from "fabric";
 import { useEffect, useRef } from "react";
 
 const BodyEditor = () => {
     const { editorRef, setEditorRef, pages, currentPage } = useEditorStore()
+    const { chosenModel } = useModelStore();
 
-    let width = 2700;
-    let height = 1100;
+    let width = chosenModel?.editorWidth || 2700;
+    let height = chosenModel?.editorHeight || 1100;
     const containerRef = useRef(null);
     const aspectRatio = width / height;
 

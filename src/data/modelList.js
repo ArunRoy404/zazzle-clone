@@ -8,6 +8,8 @@ export const modelList = [
         camera: { x: 0, y: 0, z: 80 },
         topDivider: 3,
         thumbnail: "/thumbnails/mug_thumbnail.png",
+        editorWidth: 2700,
+        editorHeight: 1100,
     },
     {
         name: "Pillow",
@@ -17,5 +19,7 @@ export const modelList = [
         topDivider: 1.2,
         thumbnail: "/thumbnails/pillow_thumbnail.png",
         mesh: "Cube_Pillow_0",
+        editorWidth: 1600,
+        editorHeight: 1100,
     },
 ]
