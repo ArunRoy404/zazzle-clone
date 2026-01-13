@@ -8,7 +8,7 @@ import LayersList from "../LayersList/LayersList"
 
 function EditorDrawerContainer() {
     return (
-        <div className="flex w-full max-w-sm flex-col gap-6">
+        <div className="flex w-full flex-col gap-6">
             <Tabs defaultValue="image" className="w-full">
                 <TabsList className="grid w-full grid-cols-5 h-auto p-1">
                     {editorOptionsData.map((item) => (

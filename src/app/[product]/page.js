@@ -30,29 +30,27 @@ const ProductEditor = () => {
 
   return (
     <div className='relative bg-gray-100 flex-1 flex items-center justify-center h-full'>
-      <div className='fixed top-80 right-10 z-100'>
+      <div className='fixed top-80 right-20 z-100'>
         <RenderModel />
       </div>
 
-      <div className='hidden md:block fixed top-20 right-10 z-10'>
+      <div className='hidden xl:block fixed top-20 right-10 z-10'>
         <RenderImage modelData={mugModelData} />
       </div>
 
-      <div className='hidden md:block absolute top-20'>
+      <div className='absolute bottom-20'>
         <TextOptionsHorizontal />
       </div>
 
-      <div className='hidden md:block absolute left-10'>
+      <div className='hidden xl:block absolute left-10'>
         <EditorOptions />
       </div>
 
 
-      <div className='absolute bottom-4 right-4 md:hidden flex items-center gap-2'>
+      <div className='absolute bottom-4 right-4 xl:hidden flex items-center gap-2'>
         <EditorDrawer />
-        <ViewImagesModal />
+        <ViewImagesModal triggerClassname="max-w-max" />
       </div>
-
-
 
       <BodyEditor />
     </div>

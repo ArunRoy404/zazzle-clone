@@ -20,9 +20,8 @@ const EditorDrawer = () => {
             <DrawerContent>
                 <DrawerTitle></DrawerTitle>
                 <DrawerFooter>
-                    <EditorDrawerContainer />
+                    <EditorDrawerContainer  />
                 </DrawerFooter>
-
             </DrawerContent>
         </Drawer>
     );

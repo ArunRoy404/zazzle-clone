@@ -97,7 +97,7 @@ const BodyEditor = () => {
         <div>
             <div
                 ref={containerRef}
-                className={`relative max-w-dvw md:max-w-[800px] overflow-hidden mx-auto `}
+                className={`relative max-w-dvw lg:max-w-[800px] overflow-hidden mx-auto `}
                 style={{ aspectRatio: aspectRatio }}
             >
                 <div>

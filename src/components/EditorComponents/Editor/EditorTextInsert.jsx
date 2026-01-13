@@ -21,7 +21,7 @@ const EditorTextInsert = ({ isMobile = false }) => {
     if (isMobile) {
         return (
             <Button
-                onClick={() => handleAddText({ text: 'This is a text box', fontSize: 24, fontWeight: 'normal', width: 1600 })}
+                onClick={() => handleAddText({ text: 'This is a text box', fontSize: 16, fontWeight: 'normal', width: 450 })}
                 className='w-full hover:scale-100 active:scale-100'
             >
                 T   Add a text box

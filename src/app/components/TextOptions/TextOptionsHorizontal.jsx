@@ -7,7 +7,7 @@ import TextAlignment from "./TextAlignment";
 const TextOptionsHorizontal = () => {
     return (
         <div
-            className="flex flex-col md:flex-row gap-1 bg-white md:shadow-md mx-auto items-center max-w-max rounded-2xl p-3"
+            className="flex flex-col lg:flex-row gap-1 bg-white md:shadow-md mx-auto items-center max-w-max rounded-2xl p-3"
         >
             <div className="flex flex-row gap-2 md:items-center">
                 <FontStyleSelection />

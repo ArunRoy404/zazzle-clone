@@ -18,10 +18,11 @@ import { Download, Eye } from "lucide-react";
 import useModelStore from '@/store/useModelStore';
 import { captureAngle } from '@/services/RenderImage';
 import useThreeRefStore from '@/store/useThreeRefStore';
+import { cn } from '@/lib/utils';
 
 
 
-const ViewImagesModal = () => {
+const ViewImagesModal = ({ triggerClassname }) => {
     const { threeRef } = useThreeRefStore()
     const { chosenModel } = useModelStore()
     const [api, setApi] = useState(null);
@@ -77,7 +78,10 @@ const ViewImagesModal = () => {
             <DialogTrigger asChild>
                 <Button variant="outline"
                     onClick={handleRenderAllImages}
-                    className="max-w-max flex gap-2 items-center w-full"
+                    className={cn(
+                        "flex gap-2 items-center w-full",
+                        triggerClassname
+                    )}
                 >
                     <Eye size={16} />
                     <span>Preview</span>
