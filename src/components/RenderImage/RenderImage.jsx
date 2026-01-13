@@ -24,16 +24,23 @@ const RenderImage = () => {
     useEffect(() => {
         if (!editorRef || !editorRef?.backgroundColor) return;
 
-        const updatePreviewImg = () => {
-            setIsPreviewRendering(true)
-            setTimeout(() => {
-                const img = captureAngle(threeRef, 'Preview', ...previewAngle)
-                setPreviewImage(img)
-                setIsPreviewRendering(false)
-            }, 1000);
-        }
+        let debounceTimer;
 
-        updatePreviewImg()
+        const updatePreviewImg = () => {
+            if (debounceTimer) clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(() => {
+                setIsPreviewRendering(true);
+                setTimeout(() => {
+                    const img = captureAngle(threeRef, 'Preview', ...previewAngle);
+                    setPreviewImage(img);
+                    setIsPreviewRendering(false);
+                }, 1000);
+
+            }, 1000);
+        };
+
+        updatePreviewImg();
 
         editorRef.on('object:added', updatePreviewImg);
         editorRef.on('object:modified', updatePreviewImg);
@@ -41,14 +48,15 @@ const RenderImage = () => {
         editorRef.on('canvas:modified', updatePreviewImg);
 
         return () => {
+            // 4. Cleanup the timer on unmount
+            if (debounceTimer) clearTimeout(debounceTimer);
+
             editorRef.off('object:added', updatePreviewImg);
             editorRef.off('object:modified', updatePreviewImg);
             editorRef.off('object:removed', updatePreviewImg);
             editorRef.off('canvas:modified', updatePreviewImg);
-        }
-    }, [editorRef])
-
-
+        };
+    }, [editorRef]);
     return (
         <div className="flex flex-col gap-4 p-4 rounded-xl shadow-md bg-white w-fit">
             <div className="relative group">
