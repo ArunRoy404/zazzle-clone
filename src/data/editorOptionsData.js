@@ -1,6 +1,6 @@
 import { Image, Images, Layers, Sticker, Type } from "lucide-react";
 
-const memoryOptionsData = [
+const editorOptionsData = [
     {
         icon: <Image />,
         label: 'Image',
@@ -29,4 +29,4 @@ const memoryOptionsData = [
 ]
 
 
-export default memoryOptionsData
+export default editorOptionsData

@@ -8,7 +8,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import StickersOptions from "./StickersOptions/StickersOptions"
-import memoryOptionsData from "@/data/memoryOptionsData"
+import editorOptionsData from "@/data/editorOptionsData"
 import MemoryTextInsert from "./Editor/MemoryTextInsert"
 import ImageOptions from "./Editor/ImageOptions"
 import useMeshStore from "@/store/useMeshStore"
@@ -37,7 +37,7 @@ const MemoryOptions = () => {
         <DropdownMenu disabled open={isDisabled ? false : open} modal={false}>
             <DropdownMenuTrigger asChild>
                 <div className={`${isDisabled ? 'cursor-not-allowed opacity-50 pointer-events-none' : ''} flex flex-col gap-3 bg-white text-center p-3 rounded-2xl max-h-max`}>
-                    {memoryOptionsData?.map((item) => (
+                    {editorOptionsData?.map((item) => (
                         <button
                             key={item.key}
                             onClick={() => handleClick(item.key)}
