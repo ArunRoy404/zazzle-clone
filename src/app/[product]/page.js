@@ -38,7 +38,7 @@ const ProductEditor = () => {
         <RenderImage modelData={mugModelData} />
       </div>
 
-      <div className='hidden md:block    <ViewImagesModal />'>
+      <div className='hidden md:block absolute top-20'>
         <TextOptionsHorizontal />
       </div>
 
