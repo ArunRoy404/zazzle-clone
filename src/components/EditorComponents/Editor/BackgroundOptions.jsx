@@ -1,12 +1,15 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { DropdownMenuContent } from '@/components/ui/dropdown-menu';
 import { useEditorStore } from '@/store/useEditorStore';
-import { Upload, Trash2 } from 'lucide-react'; // Optional icons
+import { Upload, Trash2, Pipette } from 'lucide-react';
 import * as fabric from 'fabric';
 
 const BackgroundOptions = () => {
     const { editorRef } = useEditorStore();
     const fileInputRef = useRef(null);
+    const colorPickerRef = useRef(null);
+    const [currentColor, setCurrentColor] = useState('#ffffff');
+
 
     const localTextures = [
         { id: 'm1', url: '/textures/model1_img0.jpg' },
@@ -15,18 +18,39 @@ const BackgroundOptions = () => {
         { id: 'm4', url: '/textures/model4_img0.jpg' },
     ];
 
-    // Core logic to apply the image to the canvas
+
+    // Updated colors based on your image
+    const palette = [
+        { name: 'White', value: '#ffffff' },
+        { name: 'Gray', value: '#9ca3af' },
+        { name: 'Black', value: '#000000' },
+        { name: 'Light Blue', value: '#93e0f9' },
+        { name: 'Bright Blue', value: '#00aeef' },
+        { name: 'Purple', value: '#662d91' },
+        { name: 'Pink', value: '#f5b0cf' },
+        { name: 'Magenta', value: '#ec008c' },
+        { name: 'Red', value: '#ed1c24' },
+        { name: 'Orange', value: '#f7941d' },
+        { name: 'Brown', value: '#754c24' },
+        { name: 'Yellow', value: '#ffcb05' },
+    ];
+
+    const applySolidColor = (color) => {
+        if (!editorRef) return;
+        setCurrentColor(color);
+        editorRef.set('backgroundImage', null);
+        editorRef.set('backgroundColor', color);
+        editorRef.requestRenderAll();
+        editorRef.fire('canvas:modified');
+    };
+
     const applyBackground = async (imageUrl) => {
         if (!editorRef) return;
-
         try {
             const img = await fabric.FabricImage.fromURL(imageUrl);
-
             const baseWidth = 2700;
             const baseHeight = 1100;
-
             const scale = Math.max(baseWidth / img.width, baseHeight / img.height);
-
             img.set({
                 scaleX: scale,
                 scaleY: scale,
@@ -37,8 +61,6 @@ const BackgroundOptions = () => {
                 selectable: false,
                 evented: false,
             });
-
-            // Instead of just editorRef.setBackgroundImage(img)
             editorRef.set('backgroundImage', img);
             editorRef.requestRenderAll();
             editorRef.fire('canvas:modified');
@@ -47,20 +69,15 @@ const BackgroundOptions = () => {
         }
     };
 
-
-    // Handle Local File Upload
     const handleUpload = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = (f) => {
             const data = f.target?.result;
             applyBackground(data);
         };
         reader.readAsDataURL(file);
-
-        // Reset input so the same file can be uploaded again if deleted
         e.target.value = '';
     };
 
@@ -70,20 +87,53 @@ const BackgroundOptions = () => {
                 <h3 className="font-semibold text-sm text-gray-700">Background</h3>
                 <button
                     onClick={() => {
-                        // Instead of just editorRef.setBackgroundImage(img)
                         editorRef.set('backgroundImage', null);
                         editorRef.set('backgroundColor', 'white');
                         editorRef.requestRenderAll();
                         editorRef.fire('canvas:modified');
                     }}
                     className="text-gray-400 hover:text-red-500 transition-colors"
-                    title="Remove Background"
                 >
                     <Trash2 size={16} />
                 </button>
             </div>
 
             <div className="p-3 space-y-4">
+                <div className="space-y-2">
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Solid Colors</p>
+
+                    {/* Grid layout to match your image style */}
+                    <div className="grid grid-cols-6 gap-y-3 gap-x-2 px-1 items-center">
+                        {palette.map((color) => (
+                            <button
+                                key={color.value}
+                                onClick={() => applySolidColor(color.value)}
+                                className="w-8 h-8 rounded-full border border-gray-100 hover:scale-110 transition-transform shadow-sm"
+                                style={{ backgroundColor: color.value }}
+                                title={color.name}
+                            />
+                        ))}
+
+                        {/* Custom Color Picker as the 13th circle */}
+                        <div className="relative">
+                            <button
+                                onClick={() => colorPickerRef.current?.click()}
+                                className="w-8 h-8 rounded-full border border-gray-200 hover:scale-110 transition-transform shadow-sm flex items-center justify-center bg-gray-50 text-gray-500"
+                                style={{ borderColor: currentColor }}
+                            >
+                                <Pipette size={14} />
+                            </button>
+                            <input
+                                type="color"
+                                ref={colorPickerRef}
+                                className="absolute opacity-0 pointer-events-none"
+                                value={currentColor}
+                                onChange={(e) => applySolidColor(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                </div>
+
                 {/* Upload Section */}
                 <div
                     onClick={() => fileInputRef.current?.click()}
@@ -100,9 +150,9 @@ const BackgroundOptions = () => {
                     />
                 </div>
 
-                {/* Preset Textures Section */}
+                {/* Textures Section */}
                 <div className="space-y-2">
-                    <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Presets</p>
+                    <p className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Textures</p>
                     <div className="grid grid-cols-2 gap-2">
                         {localTextures.map((texture) => (
                             <button

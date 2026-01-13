@@ -52,7 +52,6 @@ const BodyEditor = () => {
 
         initFabric(fabricCanvas)
 
-        touchToText({ ref: fabricCanvas })
         const handleDelete = (e) => handleDeleteObject({ e, ref: fabricCanvas })
         const handleRemove = (e) => handleRemoveText({ e, ref: fabricCanvas })
         window.addEventListener("keydown", handleDelete);
@@ -98,7 +97,7 @@ const BodyEditor = () => {
         <div>
             <div
                 ref={containerRef}
-                className={`relative max-w-[800px] overflow-hidden mx-auto `}
+                className={`relative max-w-dvw md:max-w-[800px] overflow-hidden mx-auto `}
                 style={{ aspectRatio: aspectRatio }}
             >
                 <div>
