@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 import useThreeRefStore from "@/store/useThreeRefStore";
@@ -31,7 +31,6 @@ const RenderModel = () => {
 
 
 
-    const containerRef = useRef(null);
     useEffect(() => {
         if (threeRef.current) setThreeRef(threeRef.current);
         return () => setThreeRef(null);
@@ -42,8 +41,6 @@ const RenderModel = () => {
 
     const init = useCallback(() => {
         if (threeRef.current.isInitialized) return;
-
-        const container = containerRef.current;
         const { scene } = threeRef.current;
 
         // Camera
@@ -153,27 +150,11 @@ const RenderModel = () => {
             init();
         }
 
-
-        // const resizeObserver = new ResizeObserver((entries) => {
-        //     for (let entry of entries) {
-        //         const { width, height } = entry.contentRect;
-        //         if (width > 0 && height > 0) {
-        //             if (!threeRef.current.isInitialized) {
-        //                 init();
-        //             }
-        //         }
-        //     }
-        // });
-        // if (containerRef.current) resizeObserver.observe(containerRef.current);
         return () => {
             cancelAnimationFrame(threeRef.current.frameId);
 
             if (threeRef.current.renderer) {
                 threeRef.current.renderer.dispose();
-
-                // if (containerRef.current?.contains(threeRef.current.renderer.domElement)) {
-                //     containerRef.current.removeChild(threeRef.current.renderer.domElement);
-                // }
 
                 threeRef.current.renderer = null;
                 threeRef.current.isInitialized = false;
