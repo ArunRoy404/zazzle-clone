@@ -22,4 +22,15 @@ export const modelList = [
         editorWidth: 1600,
         editorHeight: 1100,
     },
+    {
+        name: "Button Pin",
+        path: "/models/button_pin.glb",
+        y: 0,
+        camera: { x: 0, y: 0, z: 10 },
+        topDivider: 1.2,
+        thumbnail: "/thumbnails/Button_Pin.png",
+        mesh: "Object_4",
+        editorWidth: 1000,
+        editorHeight: 1000,
+    },
 ]
