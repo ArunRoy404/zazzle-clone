@@ -16,14 +16,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Download, Eye } from "lucide-react";
 import useModelStore from '@/store/useModelStore';
+import { captureAngle } from '@/services/RenderImage';
+import useThreeRefStore from '@/store/useThreeRefStore';
+
+
 
 const ViewImagesModal = () => {
+    const { threeRef } = useThreeRefStore()
     const { chosenModel } = useModelStore()
     const [api, setApi] = useState(null);
     const [current, setCurrent] = useState(0);
     const [capturedImages, setCapturedImages] = useState([]);
-
-
 
 
     const z1 = chosenModel?.camera?.z || 0          // initial camera z position
@@ -69,8 +72,6 @@ const ViewImagesModal = () => {
     };
 
 
-
-
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -92,26 +93,26 @@ const ViewImagesModal = () => {
                     <div className="w-full max-w-[320px] sm:max-w-md relative mt-4">
                         <Carousel setApi={setApi} className="w-full">
                             <CarouselContent>
-                                {capturedImages.map((img, index) => (
+                                {capturedImages?.map((img, index) => (
                                     <CarouselItem key={index}>
                                         <div className="relative aspect-square rounded-xl bg-slate-50 border border-slate-200 overflow-hidden shadow-sm">
                                             <img
-                                                src={img.url}
-                                                alt={img.name}
+                                                src={img?.url}
+                                                alt={img?.name}
                                                 className="object-contain w-full h-full"
                                             />
 
                                             {/* Bottom Info Bar - Responsive Text */}
                                             <div className="absolute bottom-0 w-full bg-black/70 backdrop-blur-sm p-2 sm:p-3 flex justify-between items-center text-white">
                                                 <span className="text-[10px] sm:text-sm font-medium uppercase tracking-wider">
-                                                    {img.name}
+                                                    {img?.name}
                                                 </span>
                                                 <a
-                                                    href={img.url}
-                                                    download={`render-${img.name}.png`}
+                                                    href={img?.url}
+                                                    download={`render-${img?.name}.png`}
                                                     className="bg-white/20 hover:bg-white/40 p-1.5 sm:p-2 rounded-full transition-colors"
                                                 >
-                                                    <Download size={14} className="sm:w-[18px] sm:h-[18px]" />
+                                                    <Download size={14} className="sm:w-4.5 sm:h-4.5" />
                                                 </a>
                                             </div>
                                         </div>
@@ -147,8 +148,8 @@ const ViewImagesModal = () => {
                                             : 'border-slate-200 opacity-60'}`}
                                 >
                                     <img
-                                        src={img.url}
-                                        alt={img.name}
+                                        src={img?.url}
+                                        alt={img?.name}
                                         className="w-full h-full object-cover"
                                     />
                                 </button>
