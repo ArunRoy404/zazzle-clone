@@ -23,7 +23,7 @@ export const modelList = [
         editorHeight: 1100,
     },
     {
-        name: "Button Pin",
+        name: "Button_Pin",
         path: "/models/button_pin.glb",
         y: 0,
         camera: { x: 0, y: 0, z: 10 },
