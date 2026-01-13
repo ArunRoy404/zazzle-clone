@@ -83,7 +83,7 @@ export const addText = ({ position, text, fontFamily, fontSize, color, ref, font
 
 
 
-export const addTextBox = ({ position, text, fontFamily, fontSize, color, ref, fontWeight, top, left }) => {
+export const addTextBox = ({ position, text, fontFamily, fontSize, color, ref, fontWeight, top, left, width }) => {
     if (!ref) return;
 
     const canvasWidth = ref.getWidth();
@@ -96,12 +96,12 @@ export const addTextBox = ({ position, text, fontFamily, fontSize, color, ref, f
         top: top || 60,
 
         // width: 250,
-        width: 2000,
+        width: width || 650,
         height: 150,
 
         fontFamily: fontFamily || 'Arial',
         // fontSize: fontSize || Math.round(64 / zoom),
-        fontSize: Math.round(64 / zoom),
+        fontSize: Math.round(fontSize / zoom),
         fontWeight: fontWeight || 'bold',
 
         fill: color || '#000000',

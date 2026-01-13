@@ -77,7 +77,7 @@ const ImageContainerEditor = () => {
             </Button>
 
             <p className="py-2 font-semibold">Image History</p>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2 max-h-70 overflow-y-auto md:max-h-auto">
                 {images.map((src, index) => (
                     <img
                         key={index}

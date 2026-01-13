@@ -1,6 +1,6 @@
 'use client'
 
-import MemoryOptions from '@/components/EditorComponents/MemoryOptions';
+import EditorOptions from '@/components/EditorComponents/EditorOptions';
 import BodyEditor from '../components/BodyEditor';
 import TextOptionsHorizontal from '../components/TextOptions/TextOptionsHorizontal';
 import RenderImage from '@/components/RenderImage/RenderImage';
@@ -43,7 +43,7 @@ const ProductEditor = () => {
       </div>
 
       <div className='hidden md:block absolute left-10'>
-        <MemoryOptions />
+        <EditorOptions />
       </div>
 
 

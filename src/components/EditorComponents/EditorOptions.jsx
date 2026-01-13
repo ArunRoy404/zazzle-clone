@@ -9,13 +9,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import StickersOptions from "./StickersOptions/StickersOptions"
 import editorOptionsData from "@/data/editorOptionsData"
-import MemoryTextInsert from "./Editor/MemoryTextInsert"
+import EditorTextInsert from "./Editor/EditorTextInsert"
 import ImageOptions from "./Editor/ImageOptions"
 import useMeshStore from "@/store/useMeshStore"
 import LayersOptions from "./Editor/LayersOptions"
 import BackgroundOptions from "./Editor/BackgroundOptions"
 
-const MemoryOptions = () => {
+const EditorOptions = () => {
     const [activeTab, setActiveTab] = useState(null)
     const [open, setOpen] = useState(false)
     const { selectedMesh } = useMeshStore();
@@ -58,7 +58,7 @@ const MemoryOptions = () => {
                     {activeTab === 'image' && <ImageOptions />}
 
                     {/* ✅ Text Content */}
-                    {activeTab === 'text' && <MemoryTextInsert />}
+                    {activeTab === 'text' && <EditorTextInsert />}
 
                     {/* ✅ Text Content */}
                     {activeTab === 'bg' && <BackgroundOptions />}
@@ -74,4 +74,4 @@ const MemoryOptions = () => {
     )
 }
 
-export default MemoryOptions;
+export default EditorOptions;
