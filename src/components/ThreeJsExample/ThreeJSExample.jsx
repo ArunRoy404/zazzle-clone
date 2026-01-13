@@ -9,7 +9,7 @@ import { useEditorStore } from "@/store/useEditorStore";
 import { createDataURL } from "@/services/createDataURL";
 
 
-const ThreeJSExample = () => {
+const RenderModel = () => {
     const { editorRef } = useEditorStore();
     const { chosenModel } = useModelStore();
     const [modelLoaded, setModelLoaded] = useState(false);
@@ -204,4 +204,4 @@ const ThreeJSExample = () => {
     );
 };
 
-export default ThreeJSExample;
+export default RenderModel;

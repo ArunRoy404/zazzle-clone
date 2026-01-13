@@ -8,7 +8,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"; // Ensure you have run 'npx shadcn-ui@latest add dialog'
-import ThreeJSExample from '@/components/ThreeJsExample/ThreeJSExample';
+import RenderModel from '@/components/ThreeJsExample/ThreeJSExample';
 
 
 const PreviewModal = () => {
@@ -30,7 +30,7 @@ const PreviewModal = () => {
 
                 {/* 3. The Body - We put the Three.js component here */}
                 <div className="flex-grow relative bg-slate-50">
-                    <ThreeJSExample />
+                    <renderModel />
                 </div>
 
             </DialogContent>
