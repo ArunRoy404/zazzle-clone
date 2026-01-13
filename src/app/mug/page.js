@@ -7,7 +7,7 @@ import RenderImage from '@/components/RenderImage/RenderImage';
 import { modelList } from '@/data/modelList';
 import useModelStore from '@/store/useModelStore';
 import { useEffect } from 'react';
-import RenderModel from '@/components/ThreeJsExample/ThreeJSExample';
+import RenderModel from '@/components/RenderModel/RenderModel';
 
 
 
@@ -24,11 +24,11 @@ const ThreeJsEditor = () => {
 
   return (
     <div className='relative bg-gray-50 flex-1 flex items-center justify-center h-full'>
-      <div className='fixed top-20 right-10 z-100'>
+      <div className='fixed top-80 right-10 z-100'>
         <RenderModel />
       </div>
 
-      <div className='fixed top-80 right-10 z-10'>
+      <div className='fixed top-20 right-10 z-10'>
         <RenderImage modelData={mugModelData} />
       </div>
 

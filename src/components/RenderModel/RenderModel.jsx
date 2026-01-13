@@ -47,28 +47,32 @@ const RenderModel = () => {
         const { scene } = threeRef.current;
 
         // Camera
-        const camera = new THREE.PerspectiveCamera(15, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(15, 200 / 200, 0.1, 1000);
         camera.position.set(0, 0, 80);
         threeRef.current.camera = camera;
 
 
-        // 1. Ambient Light: Provides base illumination from every direction (No shadows)
-        const ambient = new THREE.AmbientLight(0xffffff, 1.2);
+
+        // 1. Ambient Light: Keep this low so shadows stay dark
+        const ambient = new THREE.AmbientLight(0xffffff, 0.3);
         scene.add(ambient);
 
-        // 2. Hemisphere Light: Provides a subtle gradient so the model doesn't look "flat" 
-        // (Sky color, Ground color, Intensity)
-        const hemispheric = new THREE.HemisphereLight(0xffffff, 0xffffff, 1.5);
-        scene.add(hemispheric);
+        // 2. The "Key Light": This is your main sun. It creates the shadows.
+        const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        keyLight.position.set(10, 20, 10); // High and to the side
+        keyLight.castShadow = true; // Enable shadow casting
+        scene.add(keyLight);
 
-        // 3. Optional: Fill Lights (If you want the front/back to be extra bright)
-        const frontLight = new THREE.DirectionalLight(0xffffff, 0.5);
-        frontLight.position.set(0, 0, 10); // Directly in front of the mug
-        scene.add(frontLight);
+        // 3. The "Rim Light": Hits the back/side to make the model pop from the background
+        const rimLight = new THREE.DirectionalLight(0xffffff, 0.8); // Slight blue tint
+        rimLight.position.set(-10, 10, -10);
+        scene.add(rimLight);
 
-        const backLight = new THREE.DirectionalLight(0xffffff, 0.5);
-        backLight.position.set(0, 0, -10); // Directly behind the mug
-        scene.add(backLight);
+        // 4. Fill Light: Soft light from the front so the face isn't pitch black
+        const fillLight = new THREE.PointLight(0xffffff, 0.6);
+        fillLight.position.set(-5, 0, 15);
+        scene.add(fillLight);
+
 
 
 
@@ -79,11 +83,27 @@ const RenderModel = () => {
             alpha: true,
             preserveDrawingBuffer: true,
         });
-        renderer.setClearColor(0xf3f4f6, 1);
+
+
+        // Create a basic procedural environment (simulates a bright room)
+        const pmremGenerator = new THREE.PMREMGenerator(renderer);
+        pmremGenerator.compileEquirectangularShader();
+
+        // This tells Three.js to use the environment for reflections on all materials
+        scene.environment = pmremGenerator.fromScene(new THREE.Scene()).texture;
+
+
+        // Inside your renderer setup
+        renderer.outputColorSpace = THREE.SRGBColorSpace; // Ensure this is set
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2; // Increase this slightly if the whole scene is too dark
+
+
+        renderer.setClearColor(0xf0f7ff, 1); // Very light 'ice blue'
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        renderer.setSize(container.offsetWidth, container.offsetHeight);
+        renderer.setSize(200, 200);
         renderer.outputColorSpace = THREE.SRGBColorSpace;
-        container.appendChild(renderer.domElement);
+        // container.appendChild(renderer.domElement);
         threeRef.current.renderer = renderer;
         threeRef.current.isInitialized = true;
 
@@ -101,8 +121,16 @@ const RenderModel = () => {
             threeRef.current.currentModel = model;
 
             model.traverse((obj) => {
-                if (obj.isMesh && obj.name.includes(chosenModel.mesh)) {
-                    threeRef.current.material = obj.material;
+                if (obj.isMesh) {
+                    // If you want it to be very shiny/reflective:
+                    if (obj.material) {
+                        obj.material.roughness = 0.2; // Lower = shinier (0 to 1)
+                        obj.material.metalness = 0.1; // Higher = more metallic
+
+                        if (obj.name.includes(chosenModel.mesh)) {
+                            threeRef.current.material = obj.material;
+                        }
+                    }
                 }
             });
 
@@ -120,32 +148,39 @@ const RenderModel = () => {
     useEffect(() => {
         if (typeof window === "undefined") return;
 
-        const resizeObserver = new ResizeObserver((entries) => {
-            for (let entry of entries) {
-                const { width, height } = entry.contentRect;
-                if (width > 0 && height > 0) {
-                    if (!threeRef.current.isInitialized) {
-                        init();
-                    }
-                }
-            }
-        });
-        if (containerRef.current) resizeObserver.observe(containerRef.current);
+
+        if (!threeRef.current.isInitialized) {
+            init();
+        }
+
+
+        // const resizeObserver = new ResizeObserver((entries) => {
+        //     for (let entry of entries) {
+        //         const { width, height } = entry.contentRect;
+        //         if (width > 0 && height > 0) {
+        //             if (!threeRef.current.isInitialized) {
+        //                 init();
+        //             }
+        //         }
+        //     }
+        // });
+        // if (containerRef.current) resizeObserver.observe(containerRef.current);
         return () => {
             cancelAnimationFrame(threeRef.current.frameId);
 
             if (threeRef.current.renderer) {
                 threeRef.current.renderer.dispose();
 
-                if (containerRef.current?.contains(threeRef.current.renderer.domElement)) {
-                    containerRef.current.removeChild(threeRef.current.renderer.domElement);
-                }
+                // if (containerRef.current?.contains(threeRef.current.renderer.domElement)) {
+                //     containerRef.current.removeChild(threeRef.current.renderer.domElement);
+                // }
 
                 threeRef.current.renderer = null;
                 threeRef.current.isInitialized = false;
             }
         };
     }, [init]);
+
 
 
 
@@ -171,6 +206,7 @@ const RenderModel = () => {
 
 
 
+
     useEffect(() => {
         // Now this effect runs when dataURL changes OR when the model finishes loading
         if (!dataURL || !threeRef.current.material) return;
@@ -186,6 +222,11 @@ const RenderModel = () => {
             if (material.map) material.map.dispose();
 
             material.map = texture;
+
+            // ENSURE COLOR IS NEUTRAL: 
+            // This ensures the texture shows its true colors rather than being tinted white.
+            material.color.set(0xffffff);
+
             material.needsUpdate = true;
         });
 
@@ -195,13 +236,10 @@ const RenderModel = () => {
 
 
 
-    return (
-        <div
-            className="flex flex-col rounded-xl shadow-md overflow-hidden bg-gray-100 relative transition-all duration-300 w-50 h-50"
-        >
-            <div ref={containerRef} className="w-full h-full" />
-        </div>
-    );
+
+
+
+    return null
 };
 
 export default RenderModel;

@@ -14,7 +14,7 @@ export const captureAngle = (threeRef, name = 'preview', x, y, z,) => {
     renderer.getSize(originalSize);
 
 
-    const renderSize = 2048;
+    const renderSize = 1024;
     renderer.setSize(renderSize, renderSize, false);
 
     camera.aspect = 1;

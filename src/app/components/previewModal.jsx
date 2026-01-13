@@ -8,7 +8,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"; // Ensure you have run 'npx shadcn-ui@latest add dialog'
-import RenderModel from '@/components/ThreeJsExample/ThreeJSExample';
+import RenderModel from '@/components/ThreeJsExample/RenderModel';
 
 
 const PreviewModal = () => {
