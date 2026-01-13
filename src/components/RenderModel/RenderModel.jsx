@@ -51,7 +51,7 @@ const RenderModel = () => {
 
 
         // 1. Ambient Light: Keep this low so shadows stay dark
-        const ambient = new THREE.AmbientLight(0xffffff, 0.3);
+        const ambient = new THREE.AmbientLight(0xffffff, 0.8);
         scene.add(ambient);
 
         // 2. The "Key Light": This is your main sun. It creates the shadows.
