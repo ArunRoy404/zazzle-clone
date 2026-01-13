@@ -1,9 +1,13 @@
+'use client'
+
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Image as ImageIcon } from "lucide-react";
 import { modelList } from "@/data/modelList";
+import useModelStore from "@/store/useModelStore";
 
 const HomePage = () => {
+    const { setChosenModel } = useModelStore();
     return (
         <div className="container mx-auto py-10 px-4">
             <h1 className="text-3xl font-bold mb-8 text-center md:text-left">
@@ -13,7 +17,7 @@ const HomePage = () => {
             {/* Responsive Grid: 1 col on mobile, 2 on tablet, 3-4 on desktop */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {modelList.map((model) => (
-                    <Link key={model.name} href={`/${model.name}`}>
+                    <Link key={model.name} onClick={() => setChosenModel(model)} href={`/${model.name}`}>
                         <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 border-none bg-secondary/20 cursor-pointer">
                             <CardContent className="p-0">
                                 {/* Thumbnail / Placeholder Section */}
