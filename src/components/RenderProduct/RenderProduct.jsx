@@ -19,11 +19,9 @@ const RenderProduct = () => {
             timeoutId = setTimeout(() => {
                 const dataUrl = createDataURL(editorRef);
                 setDataURL(dataUrl);
-                console.log("DataURL updated"); // Optional: for debugging
-            }, 300); // 300ms delay is usually the sweet spot for UX
+            }, 300);
         };
 
-        // Initial call
         updateDataURL();
 
         const events = ['object:added', 'object:modified', 'object:removed', 'canvas:modified'];
