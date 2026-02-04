@@ -7,14 +7,13 @@ import BodyEditor from '../components/BodyEditor';
 import TextOptionsHorizontal from '../components/TextOptions/TextOptionsHorizontal';
 // import RenderImage from '@/components/RenderImage/RenderImage';
 import useModelStore from '@/store/useModelStore';
-import RenderModel from '@/components/RenderModel/RenderModel';
 import ViewImagesModal from '@/components/RenderImage/ViewImagesModal';
 import EditorDrawer from '@/components/EditorComponents/EditorDrawer/EditorDrawer';
-import NoModelFound from '@/components/NoModelFound/NoModelFound';
 import { Loader2, AlertCircle } from "lucide-react";
+import RenderProduct from '@/components/RenderProduct/RenderProduct';
 
 const ProductEditor = () => {
-  const { chosenModel, setChosenModel } = useModelStore();
+  const { setChosenModel } = useModelStore();
   const params = useParams();
   const productId = params?.product;
 
@@ -38,7 +37,6 @@ const ProductEditor = () => {
         }
 
         const data = await response.json();
-        console.log("Fetched Product:", data);
         setProduct(data);
         setChosenModel(data);
         setError(null);
@@ -83,9 +81,10 @@ const ProductEditor = () => {
   // Render actual Editor
   return (
     <div className='relative bg-gray-100 flex-1 flex items-center justify-center h-full'>
-      {/* <div className='fixed top-80 right-20 z-100'>
-        <RenderModel />
-      </div> */}
+      <div className='fixed top-80 right-20 z-100'>
+        {/* <RenderModel /> */}
+        <RenderProduct />
+      </div>
 
       {/* <div className='hidden xl:block fixed top-20 right-10 z-10'>
         <RenderImage modelData={product} />
