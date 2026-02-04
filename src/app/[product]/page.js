@@ -5,12 +5,12 @@ import { useParams } from 'next/navigation';
 import EditorOptions from '@/components/EditorComponents/EditorOptions';
 import BodyEditor from '../components/BodyEditor';
 import TextOptionsHorizontal from '../components/TextOptions/TextOptionsHorizontal';
-// import RenderImage from '@/components/RenderImage/RenderImage';
+import RenderImageAPI from '@/components/RenderImage/RenderImageAPI';
 import useModelStore from '@/store/useModelStore';
-import ViewImagesModal from '@/components/RenderImage/ViewImagesModal';
+import ViewImagesModalAPI from '@/components/RenderImage/ViewImagesModalAPI';
 import EditorDrawer from '@/components/EditorComponents/EditorDrawer/EditorDrawer';
 import { Loader2, AlertCircle } from "lucide-react";
-import RenderProduct from '@/components/RenderProduct/RenderProduct';
+// import RenderProduct from '@/components/RenderProduct/RenderProduct';
 
 const ProductEditor = () => {
   const { setChosenModel } = useModelStore();
@@ -81,14 +81,15 @@ const ProductEditor = () => {
   // Render actual Editor
   return (
     <div className='relative bg-gray-100 flex-1 flex items-center justify-center h-full'>
+      {/* 3D Model View (Currently Disabled) */}
       <div className='fixed top-80 right-20 z-100'>
         {/* <RenderModel /> */}
-        <RenderProduct />
       </div>
 
-      {/* <div className='hidden xl:block fixed top-20 right-10 z-10'>
-        <RenderImage modelData={product} />
-      </div> */}
+      {/* API-based Live Preview Sidebar */}
+      <div className='hidden xl:block fixed top-20 right-10 z-10'>
+        <RenderImageAPI />
+      </div>
 
       <div className='absolute bottom-20'>
         <TextOptionsHorizontal />
@@ -100,7 +101,7 @@ const ProductEditor = () => {
 
       <div className='absolute bottom-4 right-4 xl:hidden flex items-center gap-2'>
         <EditorDrawer />
-        <ViewImagesModal triggerClassname="max-w-max" />
+        <ViewImagesModalAPI triggerClassname="max-w-max" />
       </div>
 
       <BodyEditor />
