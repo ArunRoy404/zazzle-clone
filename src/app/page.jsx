@@ -80,7 +80,8 @@ const HomePage = () => {
             {/* Responsive Grid: 1 col on mobile, 2 on tablet, 3-4 on desktop */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {displayList.map((model) => (
-                    <Link key={model.id} onClick={() => setChosenModel(model)} href={`/${model.name}`}>
+                    <Link key={model.id} href={`/${model.id}`}>
+                    {/* <Link key={model.id} onClick={() => setChosenModel(model)} href={`/${model.name}`}> */}
                         <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 border-none bg-secondary/20 cursor-pointer">
                             <CardContent className="p-0">
                                 {/* Thumbnail / Placeholder Section */}

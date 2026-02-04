@@ -1,59 +1,95 @@
 'use client'
 
-import { useState, useEffect } from 'react'; // Added useState
+import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import EditorOptions from '@/components/EditorComponents/EditorOptions';
 import BodyEditor from '../components/BodyEditor';
 import TextOptionsHorizontal from '../components/TextOptions/TextOptionsHorizontal';
-import RenderImage from '@/components/RenderImage/RenderImage';
-import { modelList } from '@/data/modelList';
+// import RenderImage from '@/components/RenderImage/RenderImage';
 import useModelStore from '@/store/useModelStore';
 import RenderModel from '@/components/RenderModel/RenderModel';
 import ViewImagesModal from '@/components/RenderImage/ViewImagesModal';
 import EditorDrawer from '@/components/EditorComponents/EditorDrawer/EditorDrawer';
 import NoModelFound from '@/components/NoModelFound/NoModelFound';
+import { Loader2, AlertCircle } from "lucide-react";
 
 const ProductEditor = () => {
   const { chosenModel, setChosenModel } = useModelStore();
-  const [isLoading, setIsLoading] = useState(true); // Initialize loading state
   const params = useParams();
-  const product = params?.product;
+  const productId = params?.product;
 
-  const mugModelData = modelList.find(
-    (model) => model.name.toLocaleLowerCase() === product?.toString().toLocaleLowerCase()
-  );
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (mugModelData) {
-      setChosenModel(mugModelData);
-    }
-    // Set loading to false after the search/assignment logic finishes
-    setIsLoading(false);
-  }, [mugModelData, setChosenModel]);
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_API_URL;
+        const response = await fetch(`${baseUrl}/products/${productId}`, {
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+        });
 
-  // 1. Show a spinner or skeleton while checking for the model
-  if (isLoading) {
+        if (!response.ok) {
+          throw new Error(`Failed to fetch product: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Fetched Product:", data);
+        setProduct(data);
+        setChosenModel(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (productId) {
+      fetchProducts();
+    }
+  }, [productId, setChosenModel]);
+
+  if (loading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-gray-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        <p className="ml-3 text-gray-600">Loading Editor...</p>
+      <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-100 gap-4">
+        <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
+        <p className="text-gray-600 font-medium">Loading Product Editor...</p>
       </div>
     );
   }
 
-  // 2. If loading is done and still no model, show Error state
-  if (!chosenModel) return <NoModelFound />;
+  if (error || !product) {
+    return (
+      <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-100 gap-4">
+        <AlertCircle className="w-16 h-16 text-red-500" />
+        <h2 className="text-xl font-bold">Product Not Found</h2>
+        <p className="text-gray-500">{error || "The requested product could not be loaded."}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
-  // 3. Render actual Editor
+  // Render actual Editor
   return (
     <div className='relative bg-gray-100 flex-1 flex items-center justify-center h-full'>
-      <div className='fixed top-80 right-20 z-100'>
+      {/* <div className='fixed top-80 right-20 z-100'>
         <RenderModel />
-      </div>
+      </div> */}
 
-      <div className='hidden xl:block fixed top-20 right-10 z-10'>
-        <RenderImage modelData={mugModelData} />
-      </div>
+      {/* <div className='hidden xl:block fixed top-20 right-10 z-10'>
+        <RenderImage modelData={product} />
+      </div> */}
 
       <div className='absolute bottom-20'>
         <TextOptionsHorizontal />
