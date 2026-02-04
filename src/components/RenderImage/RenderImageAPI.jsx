@@ -15,7 +15,7 @@ const RenderImageAPI = () => {
     const [isRendering, setIsRendering] = useState(false);
 
     useEffect(() => {
-        if (!editorRef || !chosenModel?.id) return;
+        if (!editorRef || !editorRef.backgroundColor || !chosenModel?.id) return;
 
         let debounceTimer;
 

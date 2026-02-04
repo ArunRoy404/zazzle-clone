@@ -70,7 +70,7 @@ const ViewImagesModalAPI = ({ triggerClassname }) => {
                     )}
                 >
                     <Eye size={16} />
-                    <span>View All Angles</span>
+                    <span>Preview</span>
                 </Button>
             </DialogTrigger>
 
@@ -86,7 +86,7 @@ const ViewImagesModalAPI = ({ triggerClassname }) => {
                     </div>
                 ) : capturedImages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-[400px] text-slate-400">
-                        <p>Click "View All Angles" to start rendering</p>
+                        <p>Click "Preview" to start rendering</p>
                     </div>
                 ) : (
                     <div className="flex flex-col items-center justify-center space-y-6">
